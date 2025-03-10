@@ -11,7 +11,7 @@ class GridDataset(VisionDataset):
         self.seed = seed
         self.grid_world = GridWorld(grid_size, grid_size, seed=grid_size, start_symbol=start_symbol,
                                     goal_symbol=goal_symbol, wall_symbol=wall_symbol, free_symbol=free_symbol)
-        super().__init__()
+        super(GridDataset).__init__()
 
     def __len__(self):
         return -1

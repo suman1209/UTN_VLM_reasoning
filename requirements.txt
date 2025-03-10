@@ -1,2 +1,4 @@
-torchvision==0.21.0
+torchvision==0.15.2+cu117
 jupyter
+numpy==1.26.4
+open-flamingo
