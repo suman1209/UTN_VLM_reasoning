@@ -19,13 +19,17 @@ class CellType(Enum):
     GOAL = 4       # Represents the goal position
 
 class GridWorld:
-    def __init__(self, rows, cols, seed=None):
+    def __init__(self, rows, cols, seed=None, start_symbol="S", goal_symbol="G", wall_symbol="#", free_symbol="."):
         self.rows = rows
         self.cols = cols
         self.grid = np.full((rows, cols), CellType.FREE_CELL.value, dtype=np.int8)  # Initialize grid with free cells
         self.start = None
         self.goal = None
         self.seed = seed
+        self.start_symbol = start_symbol
+        self.goal_symbol = goal_symbol
+        self.wall_symbol = wall_symbol
+        self.free_symbol = free_symbol
         if seed is not None:
             random.seed(seed)
             np.random.seed(seed)
@@ -115,13 +119,13 @@ class GridWorld:
         for row in range(self.rows):
             for col in range(self.cols):
                 if (row, col) == self.start:
-                    grid_str += "S "
+                    grid_str += f"{self.start_symbol} "
                 elif (row, col) == self.goal:
-                    grid_str += "G "
+                    grid_str += f"{self.goal_symbol} "
                 elif self.grid[row, col] == CellType.WALL.value:
-                    grid_str += "# "
+                    grid_str += f"{self.wall_symbol} "
                 else:
-                    grid_str += ". "
+                    grid_str += f"{self.free_symbol} "
             grid_str += "\n"
         return grid_str
 

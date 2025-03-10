@@ -5,10 +5,12 @@ import random
 import numpy as np
 
 class GridDataset(VisionDataset):
-    def __init__(self , grid_size: int, seed: int = 42):
+    def __init__(self , grid_size: int, seed: int = 42, start_symbol="S",
+                 goal_symbol="G", wall_symbol="#", free_symbol="."):
         self.grid_size = grid_size
         self.seed = seed
-        self.grid_world = GridWorld(grid_size, grid_size, seed=grid_size)
+        self.grid_world = GridWorld(grid_size, grid_size, seed=grid_size, start_symbol=start_symbol,
+                                    goal_symbol=goal_symbol, wall_symbol=wall_symbol, free_symbol=free_symbol)
         super().__init__()
 
     def __len__(self):
@@ -59,4 +61,4 @@ class GridDataset(VisionDataset):
         return img
 
     def render_ascii(self):
-        return None
+        return str(self.grid_world)
