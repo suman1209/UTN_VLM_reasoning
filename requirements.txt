@@ -2,3 +2,4 @@ torchvision==0.15.2+cu117
 jupyter
 numpy==1.26.4
 open-flamingo
+matplotlib

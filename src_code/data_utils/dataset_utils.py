@@ -12,6 +12,37 @@ import heapq
 import random
 from enum import Enum, auto
 
+from PIL import Image
+import matplotlib.pyplot as plt
+
+def draw_image_grid(image_title_pairs, cols=3, figsize=(15, 10)):
+    """
+    Draws a grid of images with titles.
+
+    :param image_title_pairs: List of tuples, where each tuple contains a PIL Image and a title string.
+    :param cols: Number of columns in the grid.
+    :param figsize: Size of the matplotlib figure.
+    """
+    num_images = len(image_title_pairs)
+    rows = (num_images + cols - 1) // cols  # Calculate the number of rows needed
+
+    # Create a figure and axis for the grid
+    fig, axes = plt.subplots(rows, cols, figsize=figsize)
+    axes = axes.ravel()  # Flatten the axes array for easy iteration
+
+    # Hide axes for empty subplots
+    for i in range(num_images, len(axes)):
+        axes[i].axis('off')
+
+    # Plot each image with its title
+    for idx, (img, title) in enumerate(image_title_pairs):
+        axes[idx].imshow(img)
+        axes[idx].set_title(title)
+        axes[idx].axis('off')  # Hide axes for better visualization
+
+    plt.tight_layout()
+    plt.show()
+    
 class CellType(Enum):
     FREE_CELL = 1  # Represents free space
     WALL = 2       # Represents a wall

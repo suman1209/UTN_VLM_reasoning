@@ -3,6 +3,36 @@ from torchvision.datasets import VisionDataset
 from .dataset_utils import GridWorld, CellType
 import random
 import numpy as np
+from PIL import Image
+import matplotlib.pyplot as plt
+
+def draw_image_grid(image_title_pairs, cols=3, figsize=(15, 10)):
+    """
+    Draws a grid of images with titles.
+
+    :param image_title_pairs: List of tuples, where each tuple contains a PIL Image and a title string.
+    :param cols: Number of columns in the grid.
+    :param figsize: Size of the matplotlib figure.
+    """
+    num_images = len(image_title_pairs)
+    rows = (num_images + cols - 1) // cols  # Calculate the number of rows needed
+
+    # Create a figure and axis for the grid
+    fig, axes = plt.subplots(rows, cols, figsize=figsize)
+    axes = axes.ravel()  # Flatten the axes array for easy iteration
+
+    # Hide axes for empty subplots
+    for i in range(num_images, len(axes)):
+        axes[i].axis('off')
+
+    # Plot each image with its title
+    for idx, (img, title) in enumerate(image_title_pairs):
+        axes[idx].imshow(img)
+        axes[idx].set_title(title)
+        axes[idx].axis('off')  # Hide axes for better visualization
+
+    plt.tight_layout()
+    plt.show()
 
 class GridDataset(VisionDataset):
     def __init__(self , grid_size: int, seed: int = 42, start_symbol="S",
@@ -27,7 +57,7 @@ class GridDataset(VisionDataset):
             goal = [random.randint(0, self.grid_size - 1), random.randint(0, self.grid_size - 1)]
         self.grid_world.set_start(*start)
         self.grid_world.set_goal(*goal)
-        self.grid_world.add_random_walls(wall_prob=0.2)
+        self.grid_world.add_random_walls(wall_prob=0.05)
         path = self.grid_world.a_star()
         img, ascii, path = self.render_img(), self.render_ascii(), path
         
