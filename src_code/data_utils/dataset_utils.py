@@ -56,6 +56,7 @@ class GridWorld:
         self.reset()  # Initialize grid with free cells
         self.start = None
         self.goal = None
+        self.obstacles = []
         self.seed = seed
         self.start_symbol = start_symbol
         self.goal_symbol = goal_symbol
@@ -85,6 +86,7 @@ class GridWorld:
                 if (row, col) != self.start and (row, col) != self.goal:
                     if random.random() < wall_prob:
                         self.grid[row, col] = CellType.WALL.value
+                        self.obstacles.append((row, col))
 
     def heuristic(self, a, b):
         return abs(a[0] - b[0]) + abs(a[1] - b[1])

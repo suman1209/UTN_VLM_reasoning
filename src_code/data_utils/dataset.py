@@ -61,7 +61,7 @@ class GridDataset(VisionDataset):
         path = self.grid_world.a_star()
         img, ascii, path = self.render_img(), self.render_ascii(), path
         
-        return img, ascii, path
+        return img, self.grid_world
 
     def render_img(self):
         """
