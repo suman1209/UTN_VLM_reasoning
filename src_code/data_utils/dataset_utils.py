@@ -22,7 +22,7 @@ class GridWorld:
     def __init__(self, rows, cols, seed=None, start_symbol="S", goal_symbol="G", wall_symbol="#", free_symbol="."):
         self.rows = rows
         self.cols = cols
-        self.grid = np.full((rows, cols), CellType.FREE_CELL.value, dtype=np.int8)  # Initialize grid with free cells
+        self.reset()  # Initialize grid with free cells
         self.start = None
         self.goal = None
         self.seed = seed
@@ -39,14 +39,14 @@ class GridWorld:
             self.grid[row, col] = CellType.START.value
             self.start = (row, col)
         else:
-            raise ValueError("Start position must be on a free cell.")
+            raise ValueError(f"Start position {self.start} must be on a free cell but is {self.grid[row, col]}.")
 
     def set_goal(self, row, col):
         if self.grid[row, col] == CellType.FREE_CELL.value:
             self.grid[row, col] = CellType.GOAL.value
             self.goal = (row, col)
         else:
-            raise ValueError("Goal position must be on a free cell.")
+            raise ValueError(f"Goal position {self.goal} must be on a free cell but is {self.grid[row, col]}")
 
     def add_random_walls(self, wall_prob=0.2):
         for row in range(self.rows):
@@ -85,13 +85,13 @@ class GridWorld:
                     dx = path[i][1] - path[i - 1][1]  # Change in column (x-axis)
                     dy = path[i][0] - path[i - 1][0]  # Change in row (y-axis)
                     if dx == -1:
-                        directions.append("l")  # Left
+                        directions.append("go left")  # Left
                     elif dx == 1:
-                        directions.append("r")  # Right
+                        directions.append("go right")  # Right
                     elif dy == -1:
-                        directions.append("u")  # Up
+                        directions.append("go up")  # Up
                     elif dy == 1:
-                        directions.append("d")  # Down
+                        directions.append("go down")  # Down
                 return tuple(directions)
 
             for neighbor in self.get_neighbors(current):
@@ -129,6 +129,8 @@ class GridWorld:
             grid_str += "\n"
         return grid_str
 
+    def reset(self):
+        self.grid = np.full((self.rows, self.cols), CellType.FREE_CELL.value, dtype=np.int8)
 # Example usage:
 if __name__ == "__main__":
     grid_world = GridWorld(10, 10, seed=42)
