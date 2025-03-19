@@ -38,15 +38,15 @@ The output should be a sequence of steps to reach the goal cell. \n \
 \n \
 Actions: \n \
 Only give me the steps, like 'go up', go down', 'go left' or 'go right'\n \
-go up: move one cell up, in coordinate is y - 1 \n \
-go down: move one cell down, in coordinate is y + 1 \n \
-go left: move one cell left, , in coordinate is x - 1 \n \
-go right: move one cell right, in coordinate is x + 1 \n \
+go up: move one cell up, in coordinate is x - 1 \n \
+go down: move one cell down, in coordinate is x + 1 \n \
+go left: move one cell left, , in coordinate is y - 1 \n \
+go right: move one cell right, in coordinate is y + 1 \n \
 \n \
 Coordinate system:\n \
 The top-left cell is (0, 0). \n \
-The x-coordinate increases to the right. \n \
-The y-coordinate increases downwards. \n \
+The y-coordinate increases to the right. \n \
+The x-coordinate increases downwards. \n \
 The starting cell is at {grid_world.start}. \n \
 The goal cell is at {grid_world.goal}. \n \
 There are some obstacles at {grid_world.obstacles}. \n \
