@@ -85,13 +85,12 @@ def prompt_generator(grid_world, pure_language=False, img=None, img_symbol="", o
     if img is None:
         if not pure_language:
             prompt += (
-            f"Here is the grid world:\n{str(grid_world)}\n")
-        prompt += (
-            f"The {grid_world.start_symbol} cell is the starting cell,\n"
-            f"the {grid_world.goal_symbol} cell is the goal cell,\n"
-            f"the {grid_world.wall_symbol} cells are obstacles,\n"
-            f"and the {grid_world.free_symbol} cells are free cells.\n"
-        )
+                f"Here is the grid world:\n{str(grid_world)}\n"
+                f"The {grid_world.start_symbol} cell is the starting cell,\n"
+                f"the {grid_world.goal_symbol} cell is the goal cell,\n"
+                f"the {grid_world.wall_symbol} cells are obstacles,\n"
+                f"and the {grid_world.free_symbol} cells are free cells.\n"
+            )
         
     else:
         if not pure_language:
@@ -119,21 +118,31 @@ def prompt_generator(grid_world, pure_language=False, img=None, img_symbol="", o
         "The output should be a sequence of steps to reach the goal cell.\n"
         "\nActions:\n"
         "Only give me the steps, like 'go up', 'go down', 'go left' or 'go right'\n"
-        "go up: move one cell up, in coordinate is x - 1\n"
-        "go down: move one cell down, in coordinate is x + 1\n"
-        "go left: move one cell left, in coordinate is y - 1\n"
-        "go right: move one cell right, in coordinate is y + 1\n"
+        
     )
     if pure_language:
-        prompt += ("\nCoordinate system:\n"
-        "The top-left cell is (0, 0).\n"
-        "The y-coordinate increases to the right.\n"
-        "The x-coordinate increases downwards.\n"
-        f"The starting cell is at {grid_world.start}.\n"
-        f"The goal cell is at {grid_world.goal}.\n"
-        f"There are some obstacles at {grid_world.obstacles}.\n")
+        prompt += (
+            "go up: move one cell up, in coordinate is x - 1\n"
+            "go down: move one cell down, in coordinate is x + 1\n"
+            "go left: move one cell left, in coordinate is y - 1\n"
+            "go right: move one cell right, in coordinate is y + 1\n"
+            "\nCoordinate system:\n"
+            "The top-left cell is (0, 0).\n"
+            "The y-coordinate increases to the right.\n"
+            "The x-coordinate increases downwards.\n"
+            f"The starting cell is at {grid_world.start}.\n"
+            f"The goal cell is at {grid_world.goal}.\n"
+            f"There are some obstacles at {grid_world.obstacles}.\n"
+        )
+    else:
+        prompt += (
+            "go up: move one cell up\n"
+            "go down: move one cell down\n"
+            "go left: move one cell left\n"
+            "go right: move one cell right\n"
+        )
     if out_example:
-        prompt += "\nOutput example:\n"
-        "('go up', 'go right', 'go right', 'go down', 'go right')\n"
-    prompt +="Can you find the path from the starting cell to the goal cell?\n"
+        prompt += ("\nOutput example:\n"
+        "('go up', 'go right', 'go right', 'go down', 'go right')\n")
+    prompt +="\nCan you find the path from the starting cell to the goal cell?\n"
     return prompt
