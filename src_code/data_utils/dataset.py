@@ -57,7 +57,7 @@ class GridDataset(VisionDataset):
             goal = [random.randint(0, self.grid_size - 1), random.randint(0, self.grid_size - 1)]
         self.grid_world.set_start(*start)
         self.grid_world.set_goal(*goal)
-        self.grid_world.add_random_walls(wall_prob=0.05)
+        self.grid_world.add_random_walls(wall_prob=0.2)
         path = self.grid_world.a_star()
         img, ascii, path = self.render_img(), self.render_ascii(), path
         

@@ -80,7 +80,7 @@ class GridWorld:
         else:
             raise ValueError(f"Goal position {self.goal} must be on a free cell but is {self.grid[row, col]}")
 
-    def add_random_walls(self, wall_prob=0.2):
+    def add_random_walls(self, wall_prob=0.4):
         self.obstacles = []
         for row in range(self.rows):
             for col in range(self.cols):
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     grid_world = GridWorld(10, 10, seed=42)
     grid_world.set_start(0, 0)
     grid_world.set_goal(9, 9)
-    grid_world.add_random_walls(wall_prob=0.2)
+    grid_world.add_random_walls(wall_prob=0.4)
 
     print("Grid World:")
     print(grid_world)
