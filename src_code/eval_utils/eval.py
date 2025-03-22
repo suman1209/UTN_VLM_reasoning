@@ -10,7 +10,7 @@ MOVE_MAP = {
 
 def convert_commands_to_path(start, commands):
     """Convert movement commands into a list of coordinates."""
-    path = []
+    path = [start]
     x, y = start
     for command in commands:
         if command in MOVE_MAP:
@@ -36,7 +36,7 @@ def calculate_score(pred_path, grid_world, debug=False):
     path = convert_commands_to_path(start, pred_path)
 
     # Path length
-    path_length = len(path)
+    path_length = len(pred_path)
     optimal_length = len(optimal_path)
     extra_steps = abs(path_length - optimal_length)
     result["path_length_difference"] = extra_steps
