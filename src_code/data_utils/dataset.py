@@ -36,7 +36,7 @@ def draw_image_grid(image_title_pairs, cols=3, figsize=(15, 10)):
 
 class GridDataset(VisionDataset):
     def __init__(self , grid_size: int, seed: int = 42, start_symbol="S",
-                 goal_symbol="G", wall_symbol="#", free_symbol=".", cell_size:int = 20):
+                 goal_symbol="G", wall_symbol="#", free_symbol=".", cell_size:int = 14):
         self.cell_size = cell_size
         self.grid_size = grid_size
         self.seed = seed
@@ -78,8 +78,8 @@ class GridDataset(VisionDataset):
         }
         cell_size = self.cell_size
         # Create a blank image
-        img_width = self.grid_size * cell_size + 1
-        img_height = self.grid_size * cell_size + 1
+        img_width = self.grid_size * cell_size
+        img_height = self.grid_size * cell_size
         img = Image.new("RGB", (img_width, img_height), (255, 255, 255))
         draw = ImageDraw.Draw(img)
 
@@ -90,8 +90,8 @@ class GridDataset(VisionDataset):
                 color = colors.get(cell_type, (255, 255, 255))  # Default to white if cell type not in colors
                 x0 = col * cell_size
                 y0 = row * cell_size
-                x1 = x0 + cell_size
-                y1 = y0 + cell_size
+                x1 = x0 + cell_size - 1
+                y1 = y0 + cell_size - 1
                 draw.rectangle([x0, y0, x1, y1], fill=color, outline=(0, 0, 0))
         return img
 
