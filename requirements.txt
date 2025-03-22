@@ -1,5 +1,9 @@
-torchvision==0.15.2+cu117
+torchvision
 jupyter
 numpy==1.26.4
 open-flamingo
 matplotlib
+commitizen
+accelerate
+transformers
+scipy

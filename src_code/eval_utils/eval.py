@@ -20,40 +20,78 @@ def convert_commands_to_path(start, commands):
             y += dy
     return path
 
-def calculate_score(pred_path, grid_world, step_penalty=5, obstacle_penalty=10, end_penalty=5):
-    score = 100
+def calculate_score(pred_path, grid_world, debug=False):
+    result = {
+        "success": 0,
+        "collision": 0,
+        "goal_distance": 0,
+        "path_length_difference": 0,
+    }
+
     optimal_path = grid_world.a_star()
     obstacles = grid_world.obstacles
     start = grid_world.start
     goal = grid_world.goal
-    print(f"Predict path: {pred_path}")
-    print(f"Optimal path: {optimal_path}")
     
     path = convert_commands_to_path(start, pred_path)
 
-    # Path length penalty
+    # Path length
     path_length = len(path)
     optimal_length = len(optimal_path)
-    print(f"Path length: {path_length}")
-    print(f"Optimal path length: {optimal_length}")
     extra_steps = abs(path_length - optimal_length)
-    print(f"Step penalty: {extra_steps * step_penalty}")
-    score -= extra_steps * step_penalty
+    result["path_length_difference"] = extra_steps
 
-    # Obstacle penalty
-    print(f"Obstacles: {obstacles}")
+    # Obstacle 
     obstacles_hit = 0
     if any(step in obstacles for step in path):
         obstacles_hit += 1
-    print(f"Obstacle penalty: {obstacles_hit * obstacle_penalty}")
-    score -= obstacles_hit * obstacle_penalty
+    # Check if the path outside the grid
+    if any(step[0] < 0 or step[1] < 0 or step[0] >= grid_world.rows or step[1] >= grid_world.cols for step in path):
+        obstacles_hit += 1
+    result["collision"] = obstacles_hit
 
-    # Distance to goal penalty (Manhattan distance)
+    # Distance to goal (Manhattan distance)
     end_distance = cityblock(path[-1], goal)
-    print(f"Goal: {goal}") 
-    print(f"End position: {path[-1]}")
-    print(f"End distance: {end_distance}")
-    print(f"End distance penalty: {end_distance * end_penalty}")
-    score -= max(0, end_distance * end_penalty)
+    result["goal_distance"] = end_distance
 
-    return int(max(0, score))  # Ensure score doesn't go below 0
+    # Success reward
+    if path[-1] == goal:
+        result["success"] = 1
+
+    if debug:
+        print(f"Predict path: {pred_path}")
+        print(f"Optimal path: {optimal_path}")
+        print(f"Path length: {path_length}")
+        print(f"Optimal path length: {optimal_length}")
+        print(f"path_length_difference: {extra_steps}")
+        print(f"Obstacles: {obstacles}")
+        print(f"Obstacle hit: {obstacles_hit}")
+        print(f"Goal: {goal}") 
+        print(f"End position: {path[-1]}")
+        print(f"End distance: {end_distance}")
+
+    return result
+
+
+def eval_results(path_results, dataset, debug=False):
+    path_results_len = len(path_results)
+    success = 0
+    collision = 0
+    goal_distance = 0
+    path_length_difference = 0
+
+    for i in range(path_results_len):
+        path_result = path_results[i]
+        _, grid_world = dataset[i]
+        result = calculate_score(path_result, grid_world, debug=debug)
+        success += result["success"]
+        collision += result["collision"]
+        goal_distance += result["goal_distance"]
+        path_length_difference += result["path_length_difference"]
+
+    return {
+        "success rate (%)": 100 * (success / path_results_len),
+        "average collision": collision / path_results_len,
+        "average goal_distance": goal_distance / path_results_len,
+        "average path_length_difference": path_length_difference / path_results_len
+    }
