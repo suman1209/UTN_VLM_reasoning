@@ -8,7 +8,7 @@ import numpy as np
 def create_prompt(dataset, img_symbol="", img=None, query_idx=1):
     """This is for OpenFlamingo"""
     num_shots = 1  # currently only one shot learning
-    prompt = prompt_generator(dataset[1][1], pure_language=False, img=img, img_symbol=img_symbol, out_example=False)
+    prompt = prompt_generator(dataset[query_idx][1], pure_language=False, img=img, img_symbol=img_symbol, out_example=False)
     out = []
     
     for i in range(num_shots):
