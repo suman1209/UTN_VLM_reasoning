@@ -14,7 +14,7 @@ def create_prompt(dataset, img_symbol="", img=None, query_idx=1):
     for i in range(num_shots):
         img_rgb, grid_world = dataset[i]
         ascii_inp, path = str(grid_world), grid_world.a_star()
-        context = f"{img_symbol} In this example, the path from the starting cell to the goal cell is {path}<|endofchunk|>"
+        context = f"{img_symbol} In this example, the path from the red starting cell to the green goal cell is {path}<|endofchunk|>"
         out.append(context)
     out.append(prompt)
     out_str = "".join(out)
@@ -111,6 +111,7 @@ def prompt_generator(grid_world, pure_language=False, img=None, img_symbol="", o
 
     prompt += (
         "\nRules:\n"
+        "The grid size is 5x5\n"
         "The path must not pass through the obstacles.\n"
         "You can move up, down, left, or right from one cell to another.\n"
         "You cannot move diagonally.\n"

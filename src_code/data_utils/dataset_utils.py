@@ -163,6 +163,48 @@ class GridWorld:
             grid_str += "\n"
         return grid_str
 
+    def random_walk(self, max_steps=25):
+        """
+        Performs a random walk from start to goal.
+        Returns tuple of actions if goal is reached, None otherwise.
+        """
+        if self.start is None or self.goal is None:
+            raise ValueError("Start and goal positions must be set.")
+        
+        current = self.start
+        actions = []
+        visited = set()
+        steps = 0
+        
+        while current != self.goal and steps < max_steps:
+            # Get valid neighbors (excluding walls)
+            neighbors = self.get_neighbors(current)
+            
+            if not neighbors:
+                break  # No possible moves
+                
+            # Randomly choose next position (might include previously visited cells)
+            next_pos = random.choice(neighbors)
+            
+            # Determine direction
+            dx = next_pos[1] - current[1]  # Column change
+            dy = next_pos[0] - current[0]  # Row change
+            
+            # Convert to action string
+            if dx == -1:
+                actions.append("go left")
+            elif dx == 1:
+                actions.append("go right")
+            elif dy == -1:
+                actions.append("go up")
+            elif dy == 1:
+                actions.append("go down")
+                
+            current = next_pos
+            steps += 1
+    
+        return tuple(actions)
+
     def reset(self):
         self.grid = np.full((self.rows, self.cols), CellType.FREE_CELL.value, dtype=np.int8)
 # Example usage:
