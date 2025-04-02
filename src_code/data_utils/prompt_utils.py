@@ -117,6 +117,7 @@ def prompt_generator(grid_world, pure_language=False, img=None, img_symbol="", o
         "You cannot move diagonally.\n"
         "The path must be the shortest path from the starting cell to the goal cell.\n"
         "The output should be a sequence of steps to reach the goal cell.\n"
+        "Output the steps only, don't give me reason.\n"
         "\nActions:\n"
         "Only give me the steps, like 'go up', 'go down', 'go left' or 'go right'\n"
         
