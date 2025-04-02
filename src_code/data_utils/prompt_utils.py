@@ -119,7 +119,7 @@ def prompt_generator(grid_world, pure_language=False, img=None, img_symbol="", o
         "The output should be a sequence of steps to reach the goal cell.\n"
         "Output the steps only, don't give me reason.\n"
         "\nActions:\n"
-        "Only give me the steps, like 'go up', 'go down', 'go left' or 'go right'\n"
+        "Only give me the steps, like 'go up', 'go down', 'go left', 'go right' or 'not solvable'\n"
         
     )
     if pure_language:
@@ -128,6 +128,7 @@ def prompt_generator(grid_world, pure_language=False, img=None, img_symbol="", o
             "go down: move one cell down, in coordinate is x + 1\n"
             "go left: move one cell left, in coordinate is y - 1\n"
             "go right: move one cell right, in coordinate is y + 1\n"
+            "not solvable: it is not possible to go the the goal cell from the start cell\n"
             "\nCoordinate system:\n"
             "The top-left cell is (0, 0).\n"
             "The y-coordinate increases to the right.\n"
@@ -142,9 +143,10 @@ def prompt_generator(grid_world, pure_language=False, img=None, img_symbol="", o
             "go down: move one cell down\n"
             "go left: move one cell left\n"
             "go right: move one cell right\n"
+            "not solvable: it is not possible to go the the goal cell from the start cell\n"
         )
     if out_example:
         prompt += ("\nOutput example:\n"
-        "('go up', 'go right', 'go right', 'go down', 'go right')\n")
+        "('go up', 'go right', 'go right', 'go down', 'go right') or ('not solvable')\n")
     prompt +="\nCan you find the path from the starting cell to the goal cell?\n"
     return prompt
