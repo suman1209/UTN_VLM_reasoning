@@ -83,11 +83,14 @@ def eval_results(path_results, dataset, debug=False):
     for i in range(path_results_len):
         path_result = path_results[i]
         _, grid_world = dataset[i]
-        result = calculate_score(path_result, grid_world, debug=debug)
-        success += result["success"]
-        collision += result["collision"]
-        goal_distance += result["goal_distance"]
-        path_length_difference += result["path_length_difference"]
+        try:
+            result = calculate_score(path_result, grid_world, debug=debug)
+            success += result["success"]
+            collision += result["collision"]
+            goal_distance += result["goal_distance"]
+            path_length_difference += result["path_length_difference"]
+        except Exception as e:
+            print(f"Error in evaluating path {i}: {e}")
 
     return {
         "success rate (%)": 100 * (success / path_results_len),
