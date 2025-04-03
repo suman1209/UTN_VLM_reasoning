@@ -28,16 +28,24 @@ def calculate_score(pred_path, grid_world, debug=False):
         "path_length_difference": 0,
     }
 
-    optimal_path = grid_world.a_star()
     obstacles = grid_world.obstacles
     start = grid_world.start
     goal = grid_world.goal
+
+    optimal_path = grid_world.a_star()
+    if optimal_path is None:
+        if pred_path == ("not solvable"):
+            result["success"] = 1
+            return result
+        else:
+            result["success"] = 0
+            optimal_length = 0
+    else:
+        # Path length
+        optimal_length = len(optimal_path)
     
     path = convert_commands_to_path(start, pred_path)
-
-    # Path length
     path_length = len(pred_path)
-    optimal_length = len(optimal_path)
     extra_steps = abs(path_length - optimal_length)
     result["path_length_difference"] = extra_steps
 
