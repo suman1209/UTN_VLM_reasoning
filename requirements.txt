@@ -7,3 +7,5 @@ commitizen
 accelerate
 transformers
 scipy
+openai
+anthropic
