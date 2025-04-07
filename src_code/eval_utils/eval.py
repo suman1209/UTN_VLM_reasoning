@@ -26,6 +26,7 @@ def calculate_score(pred_path, grid_world, debug=False):
         "collision": 0,
         "goal_distance": 0,
         "path_length_difference": 0,
+        "pass_through_goal": 0
     }
 
     obstacles = grid_world.obstacles
@@ -65,6 +66,13 @@ def calculate_score(pred_path, grid_world, debug=False):
     # Success reward
     if path[-1] == goal:
         result["success"] = 1
+    else:
+        for step in path:
+            if step == goal:
+                result["pass_through_goal"] = 1
+                break
+
+    
 
     if debug:
         print(f"Predict path: {pred_path}")
@@ -87,6 +95,7 @@ def eval_results(path_results, dataset, debug=False):
     collision = 0
     goal_distance = 0
     path_length_difference = 0
+    pass_through_goal = 0
 
     for i in range(path_results_len):
         path_result = path_results[i]
@@ -97,6 +106,7 @@ def eval_results(path_results, dataset, debug=False):
             collision += result["collision"]
             goal_distance += result["goal_distance"]
             path_length_difference += result["path_length_difference"]
+            pass_through_goal += result["pass_through_goal"]
         except Exception as e:
             print(f"Error in evaluating path {i}: {e}")
 
@@ -104,5 +114,6 @@ def eval_results(path_results, dataset, debug=False):
         "success rate (%)": 100 * (success / path_results_len),
         "average collision": collision / path_results_len,
         "average goal_distance": goal_distance / path_results_len,
-        "average path_length_difference": path_length_difference / path_results_len
+        "average path_length_difference": path_length_difference / path_results_len,
+        "pass_through_goal": pass_through_goal
     }
