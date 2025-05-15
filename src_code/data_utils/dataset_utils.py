@@ -151,15 +151,30 @@ class GridWorld:
     def __str__(self):
         grid_str = ""
         for row in range(self.rows):
+            grid_str += " "
             for col in range(self.cols):
+                
                 if (row, col) == self.start:
-                    grid_str += f"{self.start_symbol} "
+                    # we don't want a space after the symbol at the end for tokenization uniformity
+                    if col != (self.cols - 1):
+                        grid_str += f"{self.start_symbol} "
+                    else:
+                        grid_str += f"{self.start_symbol}"
                 elif (row, col) == self.goal:
-                    grid_str += f"{self.goal_symbol} "
+                    if col != (self.cols - 1):
+                        grid_str += f"{self.goal_symbol} "
+                    else:
+                        grid_str += f"{self.goal_symbol}"
                 elif self.grid[row, col] == CellType.WALL.value:
-                    grid_str += f"{self.wall_symbol} "
+                    if col != (self.cols - 1):
+                        grid_str += f"{self.wall_symbol} "
+                    else:
+                        grid_str += f"{self.wall_symbol}"
                 else:
-                    grid_str += f"{self.free_symbol} "
+                    if col != (self.cols - 1):
+                        grid_str += f"{self.free_symbol} "
+                    else:
+                        grid_str += f"{self.free_symbol}"
             grid_str += "\n"
         return grid_str
 

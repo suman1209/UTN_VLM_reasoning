@@ -1,0 +1,11 @@
+torchvision
+jupyter
+numpy==1.26.4
+open-flamingo
+matplotlib
+commitizen
+accelerate
+transformers
+scipy
+openai
+anthropic

@@ -4,7 +4,7 @@ import requests
 import torch
 
 MODEL_ID = "google/gemma-3-4b-it"
-CACHE_DIR = ".cache/"
+CACHE_DIR = "../../../pip_cache/"
 
 class Gemma3Model:
     def __init__(self):
@@ -29,8 +29,7 @@ class Gemma3Model:
         
         messages[1]["content"].append({"type": "text", "text": f"{prompt}"})
         return self.generate(messages)
-        
-        pass
+
     def generate(self, messages):
         inputs = self.processor.apply_chat_template(
             messages, add_generation_prompt=True, tokenize=True,
