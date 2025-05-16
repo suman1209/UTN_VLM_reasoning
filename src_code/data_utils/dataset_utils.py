@@ -14,6 +14,12 @@ from enum import Enum, auto
 
 from PIL import Image
 import matplotlib.pyplot as plt
+from datasets import Dataset, DatasetDict
+from copy import deepcopy
+import random
+from transformers import pipeline
+from src_code.data_utils.prompt_utils import prompt_generator
+random.seed(42)
 
 def draw_image_grid(image_title_pairs, cols=3, figsize=(15, 10)):
     """
@@ -149,9 +155,9 @@ class GridWorld:
         return neighbors
 
     def __str__(self):
-        grid_str = ""
+        grid_str = f" {self.wall_symbol}" * (self.rows+2) + "\n"
         for row in range(self.rows):
-            grid_str += " "
+            grid_str += f" {self.wall_symbol} "
             for col in range(self.cols):
                 
                 if (row, col) == self.start:
@@ -175,7 +181,8 @@ class GridWorld:
                         grid_str += f"{self.free_symbol} "
                     else:
                         grid_str += f"{self.free_symbol}"
-            grid_str += "\n"
+            grid_str += f" {self.wall_symbol}\n"
+        grid_str += f" {self.wall_symbol}" * (self.rows+2) + "\n"
         return grid_str
 
     def random_walk(self, max_steps=25):
@@ -222,6 +229,76 @@ class GridWorld:
 
     def reset(self):
         self.grid = np.full((self.rows, self.cols), CellType.FREE_CELL.value, dtype=np.int8)
+    
+
+
+
+
+def dataset_generator(dataset, sys_role, train_num=100, val_num=50, test_num=50):
+    """this is used for finetuning purposes"""
+
+    train_list = []
+    val_list = []
+    test_list = []
+
+    message_temp = {
+        "messages": [
+            {
+                "role": "system",
+                "content": sys_role
+            },
+            {
+                "role": "user",
+                "content": None
+            },
+            {
+                "role": "assistant",
+                "content": None
+            }
+        ]
+    }
+
+    for i in range(train_num):
+        img_rgb, grid_world = dataset[i]
+        user_prompt = prompt_generator(grid_world, pure_language=False, img=None, img_symbol="<image>")
+        results = grid_world.a_star()
+        message = deepcopy(message_temp)
+        message["messages"][1]["content"] = user_prompt
+        message["messages"][2]["content"] = str(results)
+        train_list.append(message)
+    
+    for j in range(train_num, train_num + val_num):
+        img_rgb, grid_world = dataset[j]
+        user_prompt = prompt_generator(grid_world, pure_language=False, img=None, img_symbol="<image>")
+        results = grid_world.a_star()
+        message = deepcopy(message_temp)
+        message["messages"][1]["content"] = user_prompt
+        message["messages"][2]["content"] = str(results)
+        val_list.append(message)
+
+    for k in range(train_num + val_num, train_num + val_num + test_num):
+        img_rgb, grid_world = dataset[k]
+        user_prompt = prompt_generator(grid_world, pure_language=False, img=None, img_symbol="<image>")
+        results = grid_world.a_star()
+        message = deepcopy(message_temp)
+        message["messages"][1]["content"] = user_prompt
+        message["messages"][2]["content"] = str(results)
+        test_list.append(message)
+
+    print(f"{len(train_list)=}")
+    print(f"{len(val_list)=}")
+    print(f"{len(test_list)=}")
+    train_dataset = Dataset.from_list(train_list)
+    val_dataset = Dataset.from_list(val_list)
+    test_dataset = Dataset.from_list(test_list)
+    dataset = DatasetDict({
+        "train": train_dataset,
+        "val": val_dataset,
+        "test": test_dataset
+    })
+
+    return dataset
+    
 # Example usage:
 if __name__ == "__main__":
     grid_world = GridWorld(10, 10, seed=42)
