@@ -1,0 +1,9 @@
+torchvision
+jupyter
+numpy==1.26.4
+matplotlib
+commitizen
+accelerate
+scipy
+unsloth
+datasets
