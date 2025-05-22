@@ -11,14 +11,14 @@ img_rgb1, grid_world1 = dataset[0]
 
 
 
-pipe = pipeline("text-generation", model="deepseek-ai/DeepSeek-R1-Distill-Llama-8B")
+# pipe = pipeline("text-generation", model="deepseek-ai/DeepSeek-R1-Distill-Llama-8B")
+pipe = pipeline("text-generation", model="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B", max_length=4095)
 
-
-prompt = prompt_generator(grid_world1, img=None, img_symbol="<image>"))
+prompt = prompt_generator(grid_world1, img=None, img_symbol="<image>")
 messages = [
     {"role": "user", "content": prompt},
 ]
-response = pipe(messages).text
+response = pipe(messages)
 
-print(str(grid_world1.a_start()))
 print(f"{response = }")
+print(str(grid_world1.a_star()))
