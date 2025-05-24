@@ -64,7 +64,7 @@ def calculate_score(pred_path, grid_world, debug=False):
     result["goal_distance"] = end_distance
 
     # Success reward
-    if path[-1] == goal:
+    if path[-1] == goal and obstacles_hit == 0:
         result["success"] = 1
     else:
         for step in path:
@@ -75,16 +75,17 @@ def calculate_score(pred_path, grid_world, debug=False):
     
 
     if debug:
-        print(f"Predict path: {pred_path}")
-        print(f"Optimal path: {optimal_path}")
-        print(f"Path length: {path_length}")
-        print(f"Optimal path length: {optimal_length}")
-        print(f"path_length_difference: {extra_steps}")
-        print(f"Obstacles: {obstacles}")
-        print(f"Obstacle hit: {obstacles_hit}")
-        print(f"Goal: {goal}") 
-        print(f"End position: {path[-1]}")
-        print(f"End distance: {end_distance}")
+        print(f"result: {result}")
+        # print(f"Predict path: {pred_path}")
+        # print(f"Optimal path: {optimal_path}")
+        # print(f"Path length: {path_length}")
+        # print(f"Optimal path length: {optimal_length}")
+        # print(f"path_length_difference: {extra_steps}")
+        # print(f"Obstacles: {obstacles}")
+        # print(f"Obstacle hit: {obstacles_hit}")
+        # print(f"Goal: {goal}") 
+        # print(f"End position: {path[-1]}")
+        # print(f"End distance: {end_distance}")
 
     return result
 
