@@ -5,20 +5,31 @@ from src_code.data_utils.dataset_utils import CellType, draw_image_grid
 from src_code.data_utils.prompt_utils import prompt_generator
 # Use a pipeline as a high-level helper
 from transformers import pipeline
+import time
+import re
+NUM_EVAL = 100
+dataset = GridDataset(grid_size=6, seed = 42, wall_symbol="#", free_symbol=".", cell_size=10)
 
-dataset = GridDataset(grid_size=5, seed = 42, wall_symbol="#", free_symbol=".", cell_size=10)
-img_rgb1, grid_world1 = dataset[0]
 
+# model_name="deepseek-ai/DeepSeek-R1-Distill-Qwen-14B" # not possible with a100
+model_name  = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
+# model_name="deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
+pipe = pipeline("text-generation", model=model_name, max_length=8192)
+st_time = time.time()
+with open(f"results_{model_name.split('/')[1]}_pure_language_ouput_7x7_out_example_true.txt", "a+") as fo:
+    for i in range(NUM_EVAL):
+        st_time_temp = time.time()
+        img_rgb1, grid_world1 = dataset[i]
+        prompt = prompt_generator(grid_world1, pure_language=True, img=None, img_symbol="<image>", out_example=True)
+        # print(f"{prompt = }")
+        messages = [
+            {"role": "user", "content": prompt},
+        ]
+        response = pipe(messages)
+        result = response[0]['generated_text'][1]['content']
 
+        gt = str(grid_world1.a_star())
 
-# pipe = pipeline("text-generation", model="deepseek-ai/DeepSeek-R1-Distill-Llama-8B")
-pipe = pipeline("text-generation", model="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B", max_length=4095)
-
-prompt = prompt_generator(grid_world1, img=None, img_symbol="<image>")
-messages = [
-    {"role": "user", "content": prompt},
-]
-response = pipe(messages)
-
-print(f"{response = }")
-print(str(grid_world1.a_star()))
+        fo.write(f"### {str(i)} ###" + "\n" + result + "\n" + "time_taken: " + f"{time.time() - st_time_temp}" + "\n")
+    et_time = time.time()
+    fo.write(f"avg_time_for_infernce: {(et_time - st_time)/NUM_EVAL}")
