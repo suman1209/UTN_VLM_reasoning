@@ -111,7 +111,7 @@ def prompt_generator(grid_world, pure_language=False, img=None, img_symbol="", o
 
     prompt += (
         "\nRules:\n"
-        "The grid size is 5x5\n"
+        f"The grid size is {grid_world.rows}x{grid_world.cols}\n"
         "The path must not pass through the obstacles.\n"
         "You can move up, down, left, or right from one cell to another.\n"
         "You cannot move diagonally.\n"
