@@ -56,9 +56,11 @@ class CellType(Enum):
     GOAL = 4       # Represents the goal position
 
 class GridWorld:
-    def __init__(self, rows, cols, seed=None, start_symbol="S", goal_symbol="G", wall_symbol="#", free_symbol="."):
+    def __init__(self, rows, cols, seed=None, start_symbol="S", goal_symbol="G",
+                 wall_symbol="#", free_symbol=".", add_surrounding_wall=False):
         self.rows = rows
         self.cols = cols
+        assert self.rows == self.cols, "only square grids considered currently!"
         self.reset()  # Initialize grid with free cells
         self.start = None
         self.goal = None
@@ -68,6 +70,8 @@ class GridWorld:
         self.goal_symbol = goal_symbol
         self.wall_symbol = wall_symbol
         self.free_symbol = free_symbol
+        self.add_surrounding_wall = add_surrounding_wall
+
         if seed is not None:
             random.seed(seed)
             np.random.seed(seed)
@@ -86,14 +90,30 @@ class GridWorld:
         else:
             raise ValueError(f"Goal position {self.goal} must be on a free cell but is {self.grid[row, col]}")
 
-    def add_random_walls(self, wall_prob=0.4):
-        self.obstacles = []
-        for row in range(self.rows):
-            for col in range(self.cols):
-                if (row, col) != self.start and (row, col) != self.goal:
-                    if random.random() < wall_prob:
-                        self.grid[row, col] = CellType.WALL.value
-                        self.obstacles.append((row, col))
+    def add_random_walls(self, wall_prob=0.4, obstacle_count=None):
+        """If the obstacle count is given, then place them randomly"""
+        if obstacle_count is not None:
+            if obstacle_count > self.rows * self.rows:
+                raise ValueError("Number of locations cannot exceed grid size squared")
+    
+            locations = set()
+            while len(locations) < obstacle_count:
+                r = random.randint(0, self.rows - 1)
+                c = random.randint(0, self.cols - 1)
+                if (r, c) != self.start and (r, c) != self.goal:
+                    locations.add((r, c))
+            
+            self.obstacles = list(locations)
+            for (r, c) in self.obstacles:
+                self.grid[r, c] = CellType.WALL.value
+        else:
+            self.obstacles = []
+            for row in range(self.rows):
+                for col in range(self.cols):
+                    if (row, col) != self.start and (row, col) != self.goal:
+                        if random.random() < wall_prob:
+                            self.grid[row, col] = CellType.WALL.value
+                            self.obstacles.append((row, col))
 
     def heuristic(self, a, b):
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
@@ -154,7 +174,37 @@ class GridWorld:
                 neighbors.append((nr, nc))
         return neighbors
 
-    def __str__(self):
+    def str_without_surrounding_walls(self):
+        grid_str = ""
+        for row in range(self.rows):
+            grid_str += " "
+            for col in range(self.cols):
+                
+                if (row, col) == self.start:
+                    # we don't want a space after the symbol at the end for tokenization uniformity
+                    if col != (self.cols - 1):
+                        grid_str += f"{self.start_symbol} "
+                    else:
+                        grid_str += f"{self.start_symbol}"
+                elif (row, col) == self.goal:
+                    if col != (self.cols - 1):
+                        grid_str += f"{self.goal_symbol} "
+                    else:
+                        grid_str += f"{self.goal_symbol}"
+                elif self.grid[row, col] == CellType.WALL.value:
+                    if col != (self.cols - 1):
+                        grid_str += f"{self.wall_symbol} "
+                    else:
+                        grid_str += f"{self.wall_symbol}"
+                else:
+                    if col != (self.cols - 1):
+                        grid_str += f"{self.free_symbol} "
+                    else:
+                        grid_str += f"{self.free_symbol}"
+            grid_str += "\n"
+        return grid_str    
+
+    def str_with_surrounding_walls(self):
         grid_str = f" {self.wall_symbol}" * (self.rows+2) + "\n"
         for row in range(self.rows):
             grid_str += f" {self.wall_symbol} "
@@ -226,6 +276,14 @@ class GridWorld:
             steps += 1
     
         return tuple(actions)
+
+    def __str__(self):
+
+        if self.add_surrounding_wall:
+            grid_str = self.str_with_surrounding_walls()
+        else:
+            grid_str = self.str_without_surrounding_walls()
+        return grid_str
 
     def reset(self):
         self.grid = np.full((self.rows, self.cols), CellType.FREE_CELL.value, dtype=np.int8)

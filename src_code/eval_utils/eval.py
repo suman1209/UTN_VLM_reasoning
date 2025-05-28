@@ -22,6 +22,7 @@ def convert_commands_to_path(start, commands):
 
 def calculate_score(pred_path, grid_world, debug=False):
     result = {
+        "Exact_Match": 0,
         "success": 0,
         "collision": 0,
         "goal_distance": 0,
@@ -44,6 +45,8 @@ def calculate_score(pred_path, grid_world, debug=False):
     else:
         # Path length
         optimal_length = len(optimal_path)
+
+
     
     path = convert_commands_to_path(start, pred_path)
     path_length = len(pred_path)
@@ -66,6 +69,8 @@ def calculate_score(pred_path, grid_world, debug=False):
     # Success reward
     if path[-1] == goal and obstacles_hit == 0:
         result["success"] = 1
+        if optimal_length == path_length:
+            result["Exact_Match"] = 1
     else:
         for step in path:
             if step == goal:
@@ -92,6 +97,7 @@ def calculate_score(pred_path, grid_world, debug=False):
 
 def eval_results(path_results, dataset, debug=False):
     path_results_len = len(path_results)
+    em = 0
     success = 0
     collision = 0
     goal_distance = 0
@@ -103,6 +109,7 @@ def eval_results(path_results, dataset, debug=False):
         _, grid_world = dataset[i]
         try:
             result = calculate_score(path_result, grid_world, debug=debug)
+            em += result["Exact_Match"]
             success += result["success"]
             collision += result["collision"]
             goal_distance += result["goal_distance"]
@@ -112,6 +119,7 @@ def eval_results(path_results, dataset, debug=False):
             print(f"Error in evaluating path {i}: {e}")
 
     return {
+        "Exact Math (%)": 100 * (em / path_results_len),
         "success rate (%)": 100 * (success / path_results_len),
         "average collision": collision / path_results_len,
         "average goal_distance": goal_distance / path_results_len,

@@ -36,18 +36,22 @@ def draw_image_grid(image_title_pairs, cols=3, figsize=(15, 10)):
 
 class GridDataset(VisionDataset):
     def __init__(self , grid_size: int, seed: int = 42, start_symbol="S",
-                 goal_symbol="G", wall_symbol="#", free_symbol=".", cell_size:int = 14):
+                 goal_symbol="G", wall_symbol="#", free_symbol=".", cell_size:int = 14,
+                 add_surrounding_wall=False, obstacle_count=None, all_solvable_grids=True):
         self.cell_size = cell_size
         self.grid_size = grid_size
+        self.obstacle_count = obstacle_count
         self.seed = seed
+        self.all_solvable_grids = all_solvable_grids
         self.grid_world = GridWorld(grid_size, grid_size, seed=grid_size, start_symbol=start_symbol,
-                                    goal_symbol=goal_symbol, wall_symbol=wall_symbol, free_symbol=free_symbol)
+                                    goal_symbol=goal_symbol, wall_symbol=wall_symbol, free_symbol=free_symbol,
+                                    add_surrounding_wall=add_surrounding_wall)
         super(GridDataset).__init__()
 
     def __len__(self):
         return -1
 
-    def __getitem__(self, idx):
+    def get_grid(self, idx):
         random.seed(idx)
         np.random.seed(idx)
         self.grid_world.reset()
@@ -57,11 +61,27 @@ class GridDataset(VisionDataset):
             goal = [random.randint(0, self.grid_size - 1), random.randint(0, self.grid_size - 1)]
         self.grid_world.set_start(*start)
         self.grid_world.set_goal(*goal)
-        self.grid_world.add_random_walls(wall_prob=0.2)
+        self.grid_world.add_random_walls(wall_prob=0.2, obstacle_count=self.obstacle_count)
         path = self.grid_world.a_star()
         img, ascii, path = self.render_img(), self.render_ascii(), path
         
-        return img, self.grid_world
+        return img, self.grid_world, path
+
+    def __getitem__(self, idx):
+        random.seed(idx)
+        np.random.seed(idx)
+        if not self.all_solvable_grids:
+            img, gw, path = self.get_grid(idx)
+            return img, gw
+        else:
+            path = None
+            prev_idx = idx
+            while path is None:
+                img, gw, path = self.get_grid(idx)
+                print(f"{path = }")
+                # just to get a different idx
+                idx = random.randint(10000, 20000)
+            return img, gw
 
     def render_img(self):
         """
