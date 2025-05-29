@@ -119,7 +119,7 @@ def prompt_generator(grid_world, pure_language=False, img=None, img_symbol="", o
         "The output should be a sequence of steps to reach the goal cell.\n"
         "Output the steps only.\n"
         "\nActions:\n"
-        "Only give me the steps, like 'go up', 'go down', 'go left', 'go right' or 'not solvable'\n"
+        "Only give me the steps, like 'go up', 'go down', 'go left', 'go right'\n"
         
     )
     if pure_language:
@@ -143,10 +143,9 @@ def prompt_generator(grid_world, pure_language=False, img=None, img_symbol="", o
             "go down: move one cell down\n"
             "go left: move one cell left\n"
             "go right: move one cell right\n"
-            "not solvable: it is not possible to go the the goal cell from the start cell\n"
         )
     if out_example:
         prompt += ("\nOutput example:\n"
-        "('go up', 'go right', 'go right', 'go down', 'go right') or ('not solvable')\n")
-    prompt +="\nCan you find the path from the starting cell to the goal cell?\n"
+        "('go up', 'go right', 'go right', 'go down', 'go right', ...)\n")
+    prompt +="\nCan you find the shortest path from the starting cell to the goal cell?\n"
     return prompt

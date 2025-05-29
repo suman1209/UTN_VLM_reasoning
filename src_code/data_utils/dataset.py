@@ -78,7 +78,6 @@ class GridDataset(VisionDataset):
             prev_idx = idx
             while path is None:
                 img, gw, path = self.get_grid(idx)
-                print(f"{path = }")
                 # just to get a different idx
                 idx = random.randint(10000, 20000)
             return img, gw
