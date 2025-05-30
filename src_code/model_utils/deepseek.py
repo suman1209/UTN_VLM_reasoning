@@ -7,7 +7,7 @@ from src_code.data_utils.prompt_utils import prompt_generator
 from transformers import pipeline
 import time
 import re
-NUM_EVAL = 1
+NUM_EVAL = 100
 
 
 
