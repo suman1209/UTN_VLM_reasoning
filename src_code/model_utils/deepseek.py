@@ -14,7 +14,7 @@ NUM_EVAL = 100
 # model_name="deepseek-ai/DeepSeek-R1-Distill-Qwen-14B" # not possible with a100
 model_name  = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
 # model_name = "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
-grid_size = 7
+grid_size = 4
 out_example = True # whether to include the output example or not
 pure_language = True # whether language or ascii
 
@@ -46,7 +46,7 @@ for i in range(NUM_EVAL):
         try:
             extracted_response = f"### {i} ###" + result.split("</think>")[1]
         except Exception as e:
-            extracted_response = f"### {i} ### + {result} + {e}"
+            extracted_response = f"### {i} ### {e}"
         gt = str(grid_world1.a_star())
         responses += extracted_response + "\n"
         fo.write(f"### {str(i)} ###" + "\n" + result + "\n" + "time_taken: " + f"{time.time() - st_time_temp}" + "\n")
