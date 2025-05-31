@@ -8,7 +8,7 @@ from src_code.data_utils.prompt_utils import prompt_generator
 from transformers import pipeline
 import time
 import re
-NUM_EVAL = 2
+NUM_EVAL = 100
  
 client = OpenAI(
     base_url="https://api.novita.ai/v3/openai",
@@ -45,7 +45,7 @@ model_name = model
 st_time = time.time()
 responses = ""
 for i in range(NUM_EVAL):
-    print(f"### {i} ###")
+    # print(f"### {i} ###")
     with open(f"results_{model_name.split('/')[1]}_{pure_language_str}_{grid_size}x{grid_size}_out_example_{out_example}.txt", "a+") as fo:
         st_time_temp = time.time()
         img_rgb1, grid_world1 = dataset[i]
@@ -85,6 +85,9 @@ for i in range(NUM_EVAL):
         gt = str(grid_world1.a_star())
         responses += extracted_response + "\n"
         fo.write(f"### {str(i)} ###" + "\n" + result + "\n" + "time_taken: " + f"{time.time() - st_time_temp}" + "\n")
+        # filtered results
+        with open(f"filtered_results_{model_name.split('/')[1]}_{pure_language_str}_{grid_size}x{grid_size}_out_example_{out_example}.txt", "a+") as fo:
+            fo.write(f"Extracted Responses {i}: \n {extracted_response} \n")
 et_time = time.time()
 
 # final details 
