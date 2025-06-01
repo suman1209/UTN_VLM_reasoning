@@ -1,5 +1,5 @@
 from scipy.spatial.distance import cityblock
-
+import json
 # Mapping movement commands to coordinate changes
 MOVE_MAP = {
     "go up": (-1, 0),
@@ -81,8 +81,8 @@ def calculate_score(pred_path, grid_world, debug=False):
 
     if debug:
         print(f"result: {result}")
-        # print(f"Predict path: {pred_path}")
-        # print(f"Optimal path: {optimal_path}")
+        print(f"Predict path: {pred_path}")
+        print(f"Optimal path: {optimal_path}")
         # print(f"Path length: {path_length}")
         # print(f"Optimal path length: {optimal_length}")
         # print(f"path_length_difference: {extra_steps}")
@@ -105,6 +105,8 @@ def eval_results(path_results, dataset, debug=False):
     pass_through_goal = 0
 
     for i in range(path_results_len):
+        if debug:
+            print(i)
         path_result = path_results[i]
         _, grid_world = dataset[i]
         try:
@@ -119,10 +121,35 @@ def eval_results(path_results, dataset, debug=False):
             print(f"Error in evaluating path {i}: {e}")
 
     return {
-        "Exact Math (%)": 100 * (em / path_results_len),
+        "Exact Match (%)": 100 * (em / path_results_len),
         "success rate (%)": 100 * (success / path_results_len),
         "average collision": collision / path_results_len,
         "average goal_distance": goal_distance / path_results_len,
         "average path_length_difference": path_length_difference / path_results_len,
         "pass_through_goal": pass_through_goal
     }
+
+def eval_result_from_json(json_path: str, dataset, debug=False):
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    # Convert each list to a tuple, keeping the order by sorted numerical keys
+    result = []
+    for key in sorted(data, key=lambda x: int(x)):
+        result.append(tuple(data[key]))
+    
+    print(eval_results(result, dataset=dataset, debug=debug))
+
+if __name__ == "__main__":
+    import sys
+    ## Env variables and preparation stuffs
+    sys.path.insert(0, "../../")
+    from src_code.data_utils.dataset import GridDataset
+    from src_code.data_utils.dataset_utils import CellType
+    from src_code.eval_utils.eval import calculate_score, eval_results
+    grid_size = 3
+
+    num_obstacles = int(0.25 * (grid_size ** 2))
+    dataset = GridDataset(grid_size=grid_size, seed = 42, wall_symbol="#", free_symbol=".", 
+                          obstacle_count=num_obstacles, all_solvable_grids=True,
+                          add_surrounding_wall=False)
+    eval_result_from_json("results.json", dataset, True)
