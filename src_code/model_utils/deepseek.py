@@ -15,10 +15,12 @@ NUM_EVAL = 100
 # model_name = "deepseek-ai/DeepSeek-R1-0528"
 model_name  = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
 # model_name = "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
-grid_sizes = [7, 6, 5, 4, 3]
+# model_name = "meta-llama/Llama-3.1-8B-Instruct"
+grid_sizes = [3, 8, 9, 10]
+pipe = pipeline("text-generation", model=model_name, max_length=8192)
 for grid_size in grid_sizes:
     out_example = True # whether to include the output example or not
-    pure_language = False # whether language or ascii
+    pure_language = True # whether language or ascii
 
     pure_language_str = "language" if pure_language else "ascii"
     data = {"model_name": model_name,
@@ -31,7 +33,7 @@ for grid_size in grid_sizes:
                         add_surrounding_wall=False)
 
 
-    pipe = pipeline("text-generation", model=model_name, max_length=8192)
+    
     st_time = time.time()
     responses = ""
     for i in range(NUM_EVAL):
