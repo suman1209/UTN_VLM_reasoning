@@ -57,7 +57,8 @@ class CellType(Enum):
 
 class GridWorld:
     def __init__(self, rows, cols, seed=None, start_symbol="S", goal_symbol="G",
-                 wall_symbol="#", free_symbol=".", add_surrounding_wall=False):
+                 wall_symbol="#", free_symbol=".", add_surrounding_wall=False,
+                 add_start_end_row_identifier=False):
         self.rows = rows
         self.cols = cols
         assert self.rows == self.cols, "only square grids considered currently!"
@@ -71,7 +72,7 @@ class GridWorld:
         self.wall_symbol = wall_symbol
         self.free_symbol = free_symbol
         self.add_surrounding_wall = add_surrounding_wall
-
+        self.add_start_end_row_identifier = add_start_end_row_identifier
         if seed is not None:
             random.seed(seed)
             np.random.seed(seed)
@@ -177,7 +178,10 @@ class GridWorld:
     def str_without_surrounding_walls(self):
         grid_str = ""
         for row in range(self.rows):
-            grid_str += " "
+            if self.add_start_end_row_identifier:
+                grid_str += "<start_of_row> "
+            else:
+                grid_str += " "
             for col in range(self.cols):
                 
                 if (row, col) == self.start:
@@ -201,7 +205,12 @@ class GridWorld:
                         grid_str += f"{self.free_symbol} "
                     else:
                         grid_str += f"{self.free_symbol}"
+            if self.add_start_end_row_identifier:
+                grid_str += "<end_of_row> "
+            else:
+                grid_str += " "
             grid_str += "\n"
+
         return grid_str    
 
     def str_with_surrounding_walls(self):

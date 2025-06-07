@@ -37,7 +37,8 @@ def draw_image_grid(image_title_pairs, cols=3, figsize=(15, 10)):
 class GridDataset(VisionDataset):
     def __init__(self , grid_size: int, seed: int = 42, start_symbol="S",
                  goal_symbol="G", wall_symbol="#", free_symbol=".", cell_size:int = 14,
-                 add_surrounding_wall=False, obstacle_count=None, all_solvable_grids=True):
+                 add_surrounding_wall=False, obstacle_count=None, all_solvable_grids=True,
+                 add_start_end_row_identifier=False):
         self.cell_size = cell_size
         self.grid_size = grid_size
         self.obstacle_count = obstacle_count
@@ -45,7 +46,8 @@ class GridDataset(VisionDataset):
         self.all_solvable_grids = all_solvable_grids
         self.grid_world = GridWorld(grid_size, grid_size, seed=grid_size, start_symbol=start_symbol,
                                     goal_symbol=goal_symbol, wall_symbol=wall_symbol, free_symbol=free_symbol,
-                                    add_surrounding_wall=add_surrounding_wall)
+                                    add_surrounding_wall=add_surrounding_wall,
+                                    add_start_end_row_identifier=add_start_end_row_identifier)
         super(GridDataset).__init__()
 
     def __len__(self):
