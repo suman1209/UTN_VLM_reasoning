@@ -1,8 +1,9 @@
 torchvision
 jupyter
-numpy==1.26.4
+numpy
 matplotlib
 commitizen
 accelerate
 transformers
 scipy
+datasets
