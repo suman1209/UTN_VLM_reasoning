@@ -6,3 +6,4 @@ gemma3-4b/
 gemma3-4b-ft/
 notebooks/.ipynb_checkpoints/
 notebooks/unsloth_compiled_cache/
+dataset/
